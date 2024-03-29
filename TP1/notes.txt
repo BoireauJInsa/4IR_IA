@@ -1,0 +1,53 @@
+1.1) ./
+1.2) a)
+final_state([[1,  2,  3,  4],
+             [5,  6,  7,  8],
+             [9,  10, 11, 12],
+             [13, 14, 15, vide]]).
+b)
+?- initial_state(Ini), nth1(L,Ini,Ligne), nth1(C,Ligne, d).
+-> d est dans la ligne L col C de ini state
+
+?- final_state(Fin), nth1(3,Fin,Ligne), nth1(2,Ligne,P)
+-> Quelle est la case en L3C2 de final state
+
+c) initial_state(Ini), nth1(L,Ini,Ligne), nth1(C,Ligne, X),
+final_state(Fin), nth1(L,Fin,Ligne), nth1(C,Ligne,X).
+
+d)
+rule(up,    1, Ini, S2).
+rule(down, 1, Ini, S2).
+rule(left,  1, Ini, S2).
+rule(right, 1, Ini, S2).
+findall (X, (member(X, [up, down, left, right]), rule 1, Ini, S2))
+
+e)
+initial_state(Ini), Dirs = [up,down,left,right], findall(Y, (member(X, Dirs), rule(X, 1, Ini, S2), Y = S2), Output).
+
+f)
+Dirs = [up,down,left,right], findall(Y, (member(X, Dirs), rule(X, 1, A, S), Y = [A, S]), Output).
+
+2.1)
+	good(X, U) :-
+    final_state(Fin),
+    nth1(L,U,Ligne), nth1(C,Ligne, X),
+    not(X = vide),
+    nth1(L,Fin,Ligne2), nth1(C,Ligne2, X2),
+    not(X = X2).
+
+    heuristique1(U, H) :- 
+    findall(Y, good(Y, U), Result),
+    length(Result, H).
+2.2)
+    mantan(X, U, R) :-
+    final_state(Fin),
+    nth1(L1,U,Ligne), nth1(C1,Ligne, X),
+    nth1(L2,Fin,Ligne2), nth1(C2,Ligne2, X),
+    SL is abs( L1 - L2),
+    SC is abs( C1 - C2),
+    R is SL + SC.
+
+    heuristique2(U, H) :- 
+    findall(A, good(A, U), Result),
+    findall(Y, (member(X, Result), mantan(X, U, R), Y = R), ManList),
+    sumlist(ManList, H).

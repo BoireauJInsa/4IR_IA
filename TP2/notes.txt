@@ -1,0 +1,6 @@
+1.2)
+S situation initiale, J premier joueur à jouer (x)
+insertion d'un "o" en l3c2
+
+1.3)
+nth1

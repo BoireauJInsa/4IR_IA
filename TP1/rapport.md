@@ -8,9 +8,9 @@
 <h4 align="center">Application au taquin</h4>
 
 <p align="center">
-  <a href="#Familiarisation avec le problème du Taquin 3×3">Familiarisation avec le problème du Taquin 3×3</a> •
-  <a href="#Développement des 2 heuristiques">Développement des 2 heuristiques </a> •
-  <a href="#Implémentation de A*">Implémentation de A*</a> •
+  <a href="#familiarisation-avec-le-problème-du-taquin-33">Familiarisation avec le problème du Taquin 3×3</a> •
+  <a href="#développement-des-2-heuristiques">Développement des 2 heuristiques </a> •
+  <a href="#Implémentation-de-A*">Implémentation de A*</a> •
 </p>
 
 

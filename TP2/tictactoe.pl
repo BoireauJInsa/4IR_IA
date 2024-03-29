@@ -49,6 +49,8 @@ adversaire(o,x).
 
 % situation_terminale(_Joueur, Situation) :-   ? ? ? ? ?
 
+situation_terminale(_Joueur, Situation) :- ground(Situation).
+
 	/***************************
 	DEFINITIONS D'UN ALIGNEMENT
 	***************************/
@@ -68,8 +70,6 @@ ligne(L, M) :-
 %nth1(?Index, ?List, ?Elem)
 
 
-colonne(Index, C, M)
-	nth1(Index, )
 colonne(C,M) :-
 	transpose(M, Ts),
 	ligne(C, Ts).
@@ -128,11 +128,7 @@ possible( [],  _).
 	*/
 
 % A FAIRE 
-unifiable(X,_) :-
-	var(X),
-	!.
-
-unifiable(X, X).
+unifiable(X,J) :- (var(X) -> true ; X=J).
 	
 	/**********************************
 	 DEFINITION D'UN ALIGNEMENT GAGNANT
@@ -184,8 +180,7 @@ alignement_perdant(Ali, J) :-
 successeur(J, Etat,[L,C]) :-
 	nth1(L,Etat,Lig),
 	nth1(C,Lig,P),
-	var(P),
-	P = J.
+	(var(Element) -> Element = J).
 
 	/**************************************
    	 EVALUATION HEURISTIQUE D'UNE SITUATION
@@ -216,14 +211,9 @@ heuristique(J,Situation,H) :-		% cas 2
 % c-a-d si Situation n'est ni perdante ni gagnante.
 
 % A FAIRE 					cas 3
-heuristique(J,Situation,H) :-
-	adversaire(J, G),
-	
-	findall(_, (alignement(L, Situation), possible(L, J)), ListOutJ),
-	findall(_, (alignement(L, Situation), possible(L, G)), ListOutG),
+heuristique(J,Situation,H) :-	
+	findall(Ali, (alignement(Ali, Situation), possible(Ali, J)), ListOutJ),
+	findall(Ali, (alignement(Ali, Situation), possible(Ali, G), adversaire(J, G)), ListOutG),
 	length(ListOutJ, Lj),
 	length(ListOutG, Lg),
-	H is Lj - Lg.
-
-
-
+	H is (Lj - Lg).

@@ -56,19 +56,23 @@
 A FAIRE : ECRIRE ici les clauses de negamax/5
 .....................................
 	*/
-negamax(J, Etat, Pmax, Pmax, [nil, H]):-
-	heuristique(J, Etat, H), !.
+negamax(J, Etat, Pmax, Pmax, [Coup, H]):-
+	Coup = rien,
+	heuristique(J, Etat, H).
 
-negamax(J, Etat, _, _, [nil, _]):-
+negamax(J, Etat, P, Pmax, [Coup, H]):-
+	P < Pmax,
+	Coup = rien,
 	ground(Etat),
-	heuristique(J, Etat, _), !.
+	heuristique(J, Etat, H).
 
 
-negamax(J, _, P, Pmax, [Coup, Val]) :-
-	successeur(J, _, Succ),
+negamax(J, Etat, P, Pmax, [Coup, Val]) :-
+	P < Pmax,
+	not(situation_terminale(J, Etat)),
+	successeur(J, Etat, Succ),
 	loop_negamax(J, P, Pmax, Succ, Succbis),
-	meilleur(Succbis, [C, V]),
-	Coup = C,
+	meilleur(Succbis, [Coup, V]),
 	Val = -V.
 
 
@@ -85,10 +89,10 @@ negamax(J, _, P, Pmax, [Coup, Val]) :-
  	 pour un joueur donne dans une situation donnee 
 	 */
 
-successeurs(J,Etat,Succ) :-
+successeurs(J, Etat, Succ) :-
 	copy_term(Etat, Etat_Suiv),
-	findall([Coup,Etat_Suiv],
-		    successeur(J,Etat_Suiv,Coup),
+	findall([Coup, Etat_Suiv],
+		    successeur(J, Etat_Suiv, Coup),
 		    Succ).
 
 	/*************************************
@@ -102,7 +106,7 @@ successeurs(J,Etat,Succ) :-
 	a partir de la liste des couples [Coup, Situation_Suivante]
 	*/
 
-loop_negamax(_,_, _  ,[], []).
+loop_negamax(_, _, _,[], []).
 
 loop_negamax(J,P,Pmax,[[Coup,Suiv]|Succ],[[Coup,Vsuiv]|Reste_Couples]) :-
 	loop_negamax(J,P,Pmax,Succ,Reste_Couples),
@@ -135,19 +139,13 @@ A FAIRE : commenter chaque litteral de la 2eme clause de loop_negamax/5,
 A FAIRE : ECRIRE ici les clauses de meilleur/2
 	*/
 
-meilleur([[C, V]], [C, V]).
+meilleur([C|[]], C).
 
-meilleur([[_, V1]| Tail], [BestC, BestV]):-
-	meilleur(Tail, [C2, V2]),
-	V1 > V2,
-	BestC = C2,
-	BestV = V2.
-
-meilleur([[C1, V1]| Tail], [BestC, BestV]):-
-	meilleur(Tail, [_, V2]),
-	V1 =< V2,
-	BestC = C1,
-	BestV = V1.
+meilleur([Head|Tail], C):-
+	Head = [_, V1],
+	meilleur(Tail, C2),
+	C2 = [_, V2],
+	(V1 < V2 -> C = Head ; C = C2).
 
 
 	/******************
@@ -157,7 +155,7 @@ meilleur([[C1, V1]| Tail], [BestC, BestV]):-
 main(B,V, Pmax) :-
 	situation_initiale(Ini),
 	joueur_initial(J),
-	negamax(J, Ini, 1, Pmax, [B, V]).
+	negamax(J, Ini, 0, Pmax, [B, V]).
 	        
 
 

@@ -9,7 +9,7 @@ Doit contenir au moins 4 predicats qui seront utilises par A*
 
    rule(Rule_Name, Rule_Cost, Before_State, After_State)   % règles applicables
 
-   heuristique(Current_State, Hval)				           % calcul de l'heuristique 
+   heuristique(Current_State, Hval, FinalState)				           % calcul de l'heuristique 
 
 
 Les autres prédicats sont spécifiques au Taquin.
@@ -174,9 +174,9 @@ delete(N,X,[Y|L], [Y|R]) :-
    % HEURISTIQUES
    %*************
    
-heuristique(U,H) :-
-    heuristique1(U, H).  % au debut on utilise l'heuristique 1 
-%   heuristique2(U, H).  % ensuite utilisez plutot l'heuristique 2  
+heuristique(U,H,F) :-
+    heuristique1(U, H, F).  % au debut on utilise l'heuristique 1 
+%   heuristique2(U, H, F).  % ensuite utilisez plutot l'heuristique 2  
    
    
    %****************
@@ -196,16 +196,16 @@ heuristique(U,H) :-
     % Definir enfin l'heuristique qui détermine toutes les pièces mal placées (voir prédicat findall) 
 	% et les compte (voir prédicat length)
    
-	good(X, U) :-           % Vrai si une pièce X est bien placée dans un état U
-      final_state(Fin),
-      nth1(L,U,Ligne), nth1(C,Ligne, X),
-      not(X = vide),
-      nth1(L,Fin,Ligne2), nth1(C,Ligne2, X2),
-      not(X = X2).
-
-   heuristique1(U, H) :- 
-      findall(Y, good(Y, U), Result),     %Liste les pièces bien placées
-      length(Result, H).
+	malplace(P,U,F):-
+		coordonnees(P,U,CU),
+    	coordonnees(P,F,CF),
+    	P\= vide,
+    	CF\=CU.
+    	
+	
+    heuristique1(U, H, F) :- 
+    	findall(P, malplace(P,U,F), Mp),
+   		length(Mp, H).
 
    %****************
    %HEURISTIQUE no 2
@@ -214,15 +214,13 @@ heuristique(U,H) :-
    % Somme des distances de Manhattan à parcourir par chaque piece
    % entre sa position courante et sa positon dans l'etat final
 	
-mantan(X, U, R) :- % Vrai si la pièce X dans l'état U a une distance de Manhattan R de son état final
-   final_state(Fin),
-      nth1(L1,U,Ligne), nth1(C1,Ligne, X),
-      nth1(L2,Fin,Ligne2), nth1(C2,Ligne2, X),
-      SL is abs( L1 - L2),
-      SC is abs( C1 - C2),
-      R is SL + SC.
-
-   heuristique2(U, H) :- 
-      findall(A, good(A, U), Result),
-      findall(Y, (member(X, Result), mantan(X, U, R), Y = R), ManList),
-      sumlist(ManList, H).									
+	distance(U,P,F,D) :-
+    	coordonnees(P,U, [Lu,Cu]),
+    	coordonnees(P,F, [Lf,Cf]),
+    	P\= vide,
+    	D is abs(Lu-Lf)+abs(Cu-Cf).
+	
+   
+    heuristique2(U, H, F) :- 
+    	findall(D, (malplace(P,U,F), distance(U,P,F,D)), Mp),
+    	sumlist(Mp, H).

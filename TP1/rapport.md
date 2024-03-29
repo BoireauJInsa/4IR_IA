@@ -94,6 +94,8 @@ heuristique2(U, H) :-
 
 ## Implémentation de A*
 
+Des tests unitaires sont disponibles dans le fichier aetoile.pl. Leur nom commence toujours par "test".
+
 ```prolog
 ------- Time performance -------
 

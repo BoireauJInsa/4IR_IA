@@ -79,7 +79,7 @@ put_flat(avl(G,R,D,_H)) :-
 	nl, write(R), 
 	put_flat(D).
 
-	%----------------------------Since the file extension of Prolog has conflicts with Perl, so please click language mode at the right bottom of Visual Studio Code
+	%----------------------------
 	% Affichage (couch�) d'un AVL
 	%----------------------------
 
@@ -357,11 +357,13 @@ avl_test(9, avl(G,3,D,2)) :-
 	G = avl(nil,1,nil,0),
 	avl_test(4,D).
 	
-/* Test uniquement valable avec ECLiPSe
 
-avl_test(10, Final) :-
-   empty(Init),
-   (for(I,1,20), fromto(Init,In,Out,Final) do
-     insert(I,In,Out)
-   ).
+   
+/* Test uniquement valable avec ECLiPSe
+	
+	avl_test(10, Final) :-
+	empty(Init),
+	(for(I,1,20), fromto(Init,In,Out,Final) do
+		insert(I,In,Out)
+	).
 */

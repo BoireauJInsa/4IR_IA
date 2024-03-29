@@ -19,9 +19,9 @@
 **A) Quelle clause Prolog permettrait de représenter la situation finale du Taquin 4x4 ?**
 ```prolog
     final_state([[1,  2,  3,  4],
-             [5,  6,  7,  8],
-             [9,  10, 11, 12],
-             [13, 14, 15, vide]]).
+                [5,  6,  7,  8],
+                [9,  10, 11, 12],
+                [13, 14, 15, vide]]).
 ```
 
 **B) A quelles questions permettent  de répondre les requêtes suivantes :**
@@ -96,3 +96,42 @@ Des tests unitaires sont fournis dans le fichier taquin.pl
 ```
 
 ## Implémentation de A*
+
+```prolog
+------- Time performance -------
+
+Initial : [ [b, h, c],     
+            [a, f, d],       
+            [g,vide,e] ],
+
+heuristique1 : 0.292s, 0.282s, 0.278s, 0.278s
+heuristique2 : 0.275s, 0.280s, 0.290s, 0.267s
+
+--------
+
+Initial : [ [ a, b, c],        
+            [ g, h, d],
+            [vide,f, e] ]
+
+heurisitique1 : 0.164s, 0.150s, 0.151s, 0.133s 
+heuristique2 : 0.158s, 0.151s, 0.140s, 0.138s
+
+
+------
+ Initial : [ [b, c, d],
+            [a,vide,g],
+            [f, h, e]  ]
+h1 : 0.507s, 0.493s, 0.486s, 0.486s
+h2 : 0.491s, 0.472s, 0.476s, 0.472s
+
+-----
+Initial : [ [f, g, a],
+            [h,vide,b],
+            [d, c, e]  ]
+
+h1 : Fail
+h2 : 0.896s, 0.891s, 0.904s, 0.967s
+
+------
+The rest just fails
+```

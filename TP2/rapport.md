@@ -17,7 +17,7 @@
 
 ## Familiarisation avec le problème du TicTacToe 3×3
 
-**A) Quelle interprétation donnez-vous aux requêtes suivantes :**
+**1) Quelle interprétation donnez-vous aux requêtes suivantes :**
 ```prolog
     ?- situation_initiale(S), joueur_initial(J).
 ```
@@ -28,82 +28,63 @@ Vrai si S situation initiale et J commence (renvoie le premier jouer à jouer et
 ```
 Insertion d'un "o" en ligne 3 colonne 2
 
-**B) compléter le programme pour 
-définir les différentes formes d’alignement retournées par le prédicat alignement(Ali, Matrice)**
+**2) compléter le programme pour définir les différentes formes d’alignement retournées par le prédicat lignement(Ali, Matrice)**
 ```prolog
-    ?- initial_state(Ini), nth1(L,Ini,Ligne), nth1(C,Ligne, d).
-```
-Est vrai si 'd' se situe dans la ligne L et la colonne C
+    colonne(C,M) :-
+        transpose(M, Ts),
+        ligne(C, Ts).
 
+    diagonale(D, M) :-
+        length(M, X),
+        seconde_diag(X, D, M).
+
+    seconde_diag(_,[],[]).
+    seconde_diag(K,[E|D],[Ligne|M]) :-
+        nth1(K,Ligne,E),
+        K1 is K-1,
+        seconde_diag(K1,D,M).
+```
+**Définir le prédicat possible(Ali, Joueur)**
 ```prolog
-    ?- final_state(Fin), nth1(3,Fin,Ligne), nth1(2,Ligne,P)
-```
-Est vrai si P se trouve en L3C2 (ligne 3 colonne 2)
+    possible([X|L], J) :- unifiable(X,J), possible(L,J).
+    possible( [],  _).
 
-**C Quelle requête Prolog permettrait de savoir si une pièce donnée P (ex : a)  est bien placée dans U0 (par rapport à F) ?**
+    unifiable(X,_) :-
+        var(X),
+        !.
+
+    unifiable(X, X).
+```
+**Définir les prédicats alignement_gagnant(A, J) et alignement_perdant(A, J)**
 ```prolog
-    initial_state(Ini), nth1(L,Ini,Ligne), nth1(C,Ligne, X),
-    final_state(Fin), nth1(L,Fin,Ligne), nth1(C,Ligne,X).
-```
-Avec X la pièce donnée
+    alignement_gagnant(Ali, J) :-
+        ground(Ali),
+        possible(Ali, J).
 
-**D) quelle requête permet de trouver une situation suivante de l'état initial du Taquin 3×3 (3 sont possibles) ?**
-
-**TODO**
-
-rule(up,    1, Ini, S2).
-rule(down, 1, Ini, S2).
-rule(left,  1, Ini, S2).
-rule(right, 1, Ini, S2).
-findall (X, (member(X, [up, down, left, right]), rule(X, 1, Ini, S2)))
-
-**E) quelle requête permet d'avoir ces 3 réponses regroupées dans une liste ? (cf. findall/3 en Annexe).**
-```prolog
-    initial_state(Ini), Dirs = [up,down,left,right], findall(Y, (member(X, Dirs), rule(X, 1, Ini, S2), Y = S2), Output).
+    alignement_perdant(Ali, J) :- 
+        adversaire(J, G),
+        alignement_gagnant(Ali, G).
 ```
 
-**F) quelle requête permet d'avoir la liste de tous les couples [A, S] tels que S est la situation qui résulte de l'action A en U0 ?**
-```prolog
-    Dirs = [up,down,left,right], findall(Y, (member(X, Dirs), rule(X, 1, A, S), Y = [A, S]), Output).
-```
+TODO: tests unitaires pour tous
 
 ## Développement de l’heuristique
-Des tests unitaires sont fournis dans le fichier taquin.pl
-
-**2.1) heuristique du nombre de pièces mal placées :**
 ```prolog
-    good(X, U) :-           % Vrai si une pièce X est bien placée dans un état U
-    final_state(Fin),
-    nth1(L,U,Ligne), nth1(C,Ligne, X),
-    not(X = vide),
-    nth1(L,Fin,Ligne2), nth1(C,Ligne2, X2),
-    not(X = X2).
-
-    heuristique1(U, H) :- 
-    findall(Y, good(Y, U), Result),     %Liste les pièces bien placées
-    length(Result, H).
+    heuristique(J,Situation,H) :-
+        adversaire(J, G),
+        
+        findall(_, (alignement(L, Situation), possible(L, J)), ListOutJ),
+        findall(_, (alignement(L, Situation), possible(L, G)), ListOutG),
+        length(ListOutJ, Lj),
+        length(ListOutG, Lg),
+        H is Lj - Lg.
 ```
 
-**2.2) heuristique basée sur la distance de Manhattan :**
-```prolog
-    mantan(X, U, R) :- % Vrai si la pièce X dans l'état U a une distance de Manhattan R de son état final
-    final_state(Fin),
-    nth1(L1,U,Ligne), nth1(C1,Ligne, X),
-    nth1(L2,Fin,Ligne2), nth1(C2,Ligne2, X),
-    SL is abs( L1 - L2),
-    SC is abs( C1 - C2),
-    R is SL + SC.
-
-    heuristique2(U, H) :- 
-    findall(A, good(A, U), Result),
-    findall(Y, (member(X, Result), mantan(X, U, R), Y = R), ManList),
-    sumlist(ManList, H).
-```
+TODO: tests unitaires
 
 ## Développement de l’algorithme Negamax
 
-
-
-
-
 ## Expérimentation et extensions
+```prolog
+
+```

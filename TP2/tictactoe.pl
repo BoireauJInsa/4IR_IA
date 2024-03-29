@@ -163,12 +163,11 @@ possible pour J qui n'a aucun element encore libre.
 
 alignement_gagnant(Ali, J) :-
 	ground(Ali),
-	Ali = [J, J, J].
+	possible(Ali, J).
 
 alignement_perdant(Ali, J) :- 
-	ground(Ali),
 	adversaire(J, G),
-	Ali = [G, G, G].
+	alignement_gagnant(Ali, G).
 
 
 	/* ****************************
@@ -183,7 +182,8 @@ alignement_perdant(Ali, J) :-
 
 % A FAIRE
 successeur(J, Etat,[L,C]) :-
-	nth1(L,Etat,Lig), nth1(C,Lig,P),
+	nth1(L,Etat,Lig),
+	nth1(C,Lig,P),
 	var(P),
 	P = J.
 

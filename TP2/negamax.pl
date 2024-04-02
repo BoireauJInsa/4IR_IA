@@ -66,15 +66,13 @@ negamax(J, Etat, P, Pmax, [Coup, H]):-
 	ground(Etat),
 	heuristique(J, Etat, H).
 
-
-negamax(J, Etat, P, Pmax, [Coup, Val]) :-
-	P < Pmax,
+negamax(J, Etat, P, Pmax, [Coup, H]) :-
+	P<Pmax,
 	not(situation_terminale(J, Etat)),
-	successeur(J, Etat, Succ),
-	loop_negamax(J, P, Pmax, Succ, Succbis),
-	meilleur(Succbis, [Coup, V]),
-	Val = -V.
-
+	successeurs(J, Etat, Succ),
+	loop_negamax(J, P, Pmax, Succ, Succ2),
+	meilleur(Succ2, [Coup, H2]),
+	H is -H2.
 
 
 	/*******************************************

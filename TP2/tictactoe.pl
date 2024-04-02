@@ -21,7 +21,6 @@
 	Ainsi si on joue un coup en S, S perd une variable libre, mais peut continuer a s'appeler S (on n'a pas besoin de la designer
 	par un nouvel identificateur).
 	*/
-
 :- lib(listut).
 :- use_module(library(clpfd)). 
 
@@ -180,7 +179,7 @@ alignement_perdant(Ali, J) :-
 successeur(J, Etat,[L,C]) :-
 	nth1(L,Etat,Lig),
 	nth1(C,Lig,P),
-	(var(Element) -> Element = J).
+	(var(P) -> P = J).
 
 	/**************************************
    	 EVALUATION HEURISTIQUE D'UNE SITUATION
